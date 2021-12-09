@@ -11,7 +11,7 @@ ___
 
 ## Todo:
  - ~~Complete base bot~~
- - Actually dockerize it
+ - ~~Actually dockerize it~~
  - Write a proper README
  - Multi-lingual support for erasmus students
 

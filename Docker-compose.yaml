@@ -1,0 +1,10 @@
+---
+version: "3"
+services:
+  multirest-bot:
+    build: .
+    container_name: multirest-bot
+    env_file: [.env]
+    environment:
+      - PREFIX= # not required, defaults to !
+    restart: unless-stopped

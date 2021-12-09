@@ -1,0 +1,21 @@
+# git stuff
+.git
+.gitignore
+LICENSE
+README.md
+Docker-compose.yaml
+
+# .env
+.env
+
+# vim
+*~
+*.swp
+*.swo
+
+# vscode
+.vscode
+
+# python entulho
+__pycache__/
+*.py[cod]
