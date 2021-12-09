@@ -14,6 +14,3 @@ ___
  - ~~Actually dockerize it~~
  - Write a proper README
  - Multi-lingual support for erasmus students
-
-## Disclamer
-This is still a work in progress, not ready for usage.
