@@ -1,0 +1,14 @@
+# .env
+.env
+
+# vim
+*~
+*.swp
+*.swo
+
+# vscode
+.vscode
+
+# python entulho
+__pycache__/
+*.py[cod]
