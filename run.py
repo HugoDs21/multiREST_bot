@@ -1,6 +1,5 @@
 import os
 import requests
-from requests.api import get
 from discord.ext import commands
 from datetime import date, timedelta, datetime
 
@@ -11,6 +10,8 @@ bot = commands.Bot(command_prefix=PREFIX)
 
 baseURL = "http://admin.multirest.eu/api/"
 
+instituicoes = {"fcup": 0, "feup": 2}
+
 @bot.event # on_ready
 async def on_ready():
     print('Logged in as')
@@ -19,58 +20,76 @@ async def on_ready():
     print('------')
 
 @bot.command()
-async def multirest(ctx, arg="help"):
-    arg = arg.lower()
-    if arg == 'help':
-        await ctx.send(f"{PREFIX}multirest [`semana`/`hoje`/`amanha`]")
-    elif arg == "semana":
-        await ctx.send(getSemana())
-    elif arg == "hoje":
-        await ctx.send(getToday())
-    elif arg == "amanha":
-        await ctx.send(getTomorrow())
+async def multirest(ctx, arg1 = "fcup", arg2 = "help"):
+    arg1 = arg1.lower()
+    arg2 = arg2.lower()
+    id = instituicoes.get(arg1)
+    if id == 0:
+        if arg2 == 'help':
+            await help(ctx)
+        elif arg2 == "semana":
+            await ctx.send(getSemana(id, arg1))
+        elif arg2 == "hoje":
+            await ctx.send(getToday(id, arg1))
+        elif arg2 == "amanha":
+            await ctx.send(getTomorrow(id, arg1))
+        else:
+            await ctx.send(f"Argumento inválido. Usa {PREFIX}multirest [`semana`/`hoje`/`amanha`]")
+    elif id == 2:
+        if arg2 == 'help':
+            await help(ctx)
+        elif arg2 == "semana":
+            await ctx.send(getSemana(id, arg1))
+        elif arg2 == "hoje":
+            await ctx.send(getToday(id+1, arg1))
+        elif arg2 == "amanha":
+            await ctx.send(getTomorrow(id+1, arg1))
+        else:
+            await ctx.send(f"Argumento inválido. Usa {PREFIX}multirest [`semana`/`hoje`/`amanha`]")
     else:
         await ctx.send(f"Argumento inválido. Usa {PREFIX}multirest [`semana`/`hoje`/`amanha`]")
 
+async def help(ctx):
+    await ctx.send("Use `!multirest [`fcup` / `feup`] [`semana`/`hoje`/`amanha`]`")
 
-def getSemana():
+def getSemana(id, arg1):
     r = requests.get(baseURL + 'weekly-menus')
 
     resposta = r.json()
 
-    fcupJson = resposta[0]
-    pratos = fcupJson.get('dishes')
-    return parseSemana(pratos)
+    respostaJson = resposta[id]
+    pratos = respostaJson.get('dishes')
+    return "__**" + arg1.upper() + "**__\n\n" + parseSemana(pratos)
 
-def getToday():
+def getToday(id, arg1):
     today = date.today()
     dayNum = today.weekday()
     today = today.strftime("%Y-%m-%d")
-    url = baseURL + "daily-menus?date=" + today + "&institution_id=1"
+    url = f"{baseURL}daily-menus?date={today}&institution_id={id}"
     r = requests.get(url)
 
     resposta = r.json()
     resposta = resposta[0]
     pratos = resposta.get('dishes')
     if pratos:
-        return getDayByIndex(dayNum) + "\n\n" + parseDia(pratos)
+        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + parseDia(pratos)
     else:
-        return getDayByIndex(dayNum) + "\n\n" + "Não há pratos para hoje"
+        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + "Não há pratos para hoje"
 
-def getTomorrow():
+def getTomorrow(id, arg1):
     tomorrow = date.today() + timedelta(days=1)
     dayNum = tomorrow.weekday()
     tomorrow = tomorrow.strftime("%Y-%m-%d")
-    url = baseURL + "daily-menus?date=" + tomorrow + "&institution_id=1"
+    url = f"{baseURL}daily-menus?date={tomorrow}&institution_id={id}"
     r = requests.get(url)
 
     resposta = r.json()
     resposta = resposta[0]
     pratos = resposta.get('dishes')
     if pratos:
-        return getDayByIndex(dayNum) + "\n\n" + parseDia(pratos)
+        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + parseDia(pratos)
     else:
-        return getDayByIndex(dayNum) + "\n\n" + "Não há pratos para amanhã"
+        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + "Não há pratos para amanhã"
     pass
 
 def parseDia(dia):
