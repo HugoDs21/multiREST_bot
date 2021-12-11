@@ -59,7 +59,7 @@ def parseDia(dia):
     return var
 
 def getDayByIndex(day):
-    days = ['**Segunda**', '**Terça**', '**Quarta**', '**Quinta**', '**Sexta**']
+    days = ['**Segunda**', '**Terça**', '**Quarta**', '**Quinta**', '**Sexta**', '**Sábado**', '**Domingo**']
     return days[day]
 
 def parseSemana(semana):
