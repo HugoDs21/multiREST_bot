@@ -9,10 +9,18 @@ DISCORD_API_TOKEN = os.getenv('DISCORD_API_TOKEN')
 
 bot = commands.Bot(command_prefix=PREFIX)
 
-baseURL = "http://admin.multirest.eu/api/"
-
 instituicoes = {"fcup": 0, "feup": 2}
 
+actions = {"help": func.getHelp, 
+           "ajuda": func.getHelp,
+           "h": func.getHelp,
+           "hoje": func.getToday,
+           "hj": func.getToday,
+           "amanha": func.getTomorrow,
+           "am": func.getTomorrow,
+           "semana": func.getSemana,
+           "sem": func.getSemana,
+           }
 
 @bot.event # on_ready
 async def on_ready():
@@ -23,32 +31,31 @@ async def on_ready():
 
 @bot.command()
 async def multirest(ctx, *args):
-    arg1 = arg1.lower()
-    arg2 = arg2.lower()
-    id = instituicoes.get(arg1)
-    if id == 0:
-        if arg2 == 'help':
-            await func.getHelp(ctx)
-        elif arg2 == "semana":
-            await ctx.send(func.getSemana(id, arg1))
-        elif arg2 == "hoje":
-            await ctx.send(func.getToday(id, arg1))
-        elif arg2 == "amanha":
-            await ctx.send(func.getTomorrow(id, arg1))
-        else:
-            await func.invalidArg(ctx)
-    elif id == 2:
-        if arg2 == 'help':
-            await getHelp(ctx)
-        elif arg2 == "semana":
-            await ctx.send(func.getSemana(id, arg1))
-        elif arg2 == "hoje":
-            await ctx.send(func.getToday(id+1, arg1))
-        elif arg2 == "amanha":
-            await ctx.send(func.getTomorrow(id+1, arg1))
-        else:
-            await func.invalidArg(ctx)
-    else:
-        await func.invalidArg(ctx)
+    instId = instituicoes.get("fcup") #Default
+    instName = "fcup"
 
+    if len(args) == 0:
+        await ctx.send(func.invalidArg())   
+
+    possible_args = list(actions.keys()) + list(instituicoes.keys())
+
+    #get common elements between args and possible_args
+    common_args = [x for x in args if x in possible_args]
+    
+    if len(common_args) == 1:
+        await ctx.send(actions[common_args[0]](instId, instName))
+    elif len(common_args) == 2:
+        if "feup" in args:
+            instId = instituicoes.get("feup")
+            instName = "feup"
+        for x in common_args:
+            if x in actions:
+                await ctx.send(actions[x](instId, instName))
+    else:
+        pass
+        
+@bot.command()
+async def mr(ctx, *args):
+    await multirest(ctx, *args)        
+        
 bot.run(DISCORD_API_TOKEN)
