@@ -3,11 +3,14 @@ import requests
 from discord.ext import commands
 from datetime import date, timedelta, datetime
 
-async def getHelp(ctx):
-    await ctx.send("Use `!multirest [`fcup` / `feup`] [`semana`/`hoje`/`amanha`]`")
+baseURL = "http://admin.multirest.eu/api/"
 
-async def invalidArg(ctx):
-    await ctx.send(f"Argumento inválido. Usa {PREFIX}multirest [`semana`/`hoje`/`amanha`]")
+def getHelp(*args):
+    return "Usa`!multirest [`fcup` / `feup`] [`semana`/`hoje`/`amanha`]`"
+
+#TODO: get prefix from run.py
+def invalidArg(*args):
+    return getHelp()
 
 def getSemana(id, arg1):
     r = requests.get(baseURL + 'weekly-menus')
