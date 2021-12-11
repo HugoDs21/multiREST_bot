@@ -22,6 +22,9 @@ def getSemana(id, arg1):
     return "__**" + arg1.upper() + "**__\n\n" + parseSemana(pratos)
 
 def getToday(id, arg1):
+    if arg1 == "feup":
+        id += 1
+    
     today = date.today()
     dayNum = today.weekday()
     today = today.strftime("%Y-%m-%d")
@@ -37,6 +40,9 @@ def getToday(id, arg1):
         return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + "Não há pratos para hoje"
 
 def getTomorrow(id, arg1):
+    if arg1 == "feup":
+        id += 1
+    
     tomorrow = date.today() + timedelta(days=1)
     dayNum = tomorrow.weekday()
     tomorrow = tomorrow.strftime("%Y-%m-%d")
