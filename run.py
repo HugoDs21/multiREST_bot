@@ -43,9 +43,12 @@ async def multirest(ctx, *args):
     common_args = [x for x in args if x in possible_args]
     
     if len(common_args) == 1:
-        await ctx.send(actions[common_args[0]](instId, instName))
+        if common_args[0] in actions:
+            await ctx.send(actions[common_args[0]](instId, instName))
+        else:
+            await ctx.send(func.invalidArg())
     elif len(common_args) == 2:
-        if "feup" in args:
+        if "feup" in common_args:
             instId = instituicoes.get("feup")
             instName = "feup"
         for x in common_args:
