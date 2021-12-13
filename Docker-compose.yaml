@@ -2,7 +2,7 @@
 version: "3"
 services:
   multirest-bot:
-    build: .
+    image: ghcr.io/hugods21/multirest_bot:main
     container_name: multirest-bot
     env_file: [.env]
     environment:
