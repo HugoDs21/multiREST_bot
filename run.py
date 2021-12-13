@@ -1,6 +1,6 @@
 import os
 import requests
-from requests.api import get
+import functions as func
 from discord.ext import commands
 from datetime import date, timedelta, datetime
 
@@ -9,7 +9,18 @@ DISCORD_API_TOKEN = os.getenv('DISCORD_API_TOKEN')
 
 bot = commands.Bot(command_prefix=PREFIX)
 
-baseURL = "http://admin.multirest.eu/api/"
+instituicoes = {"fcup": 0, "feup": 2}
+
+actions = {"help": func.getHelp, 
+           "ajuda": func.getHelp,
+           "h": func.getHelp,
+           "hoje": func.getToday,
+           "hj": func.getToday,
+           "amanha": func.getTomorrow,
+           "am": func.getTomorrow,
+           "semana": func.getSemana,
+           "sem": func.getSemana,
+           }
 
 @bot.event # on_ready
 async def on_ready():
@@ -19,78 +30,35 @@ async def on_ready():
     print('------')
 
 @bot.command()
-async def multirest(ctx, arg="help"):
-    arg = arg.lower()
-    if arg == 'help':
-        await ctx.send(f"{PREFIX}multirest [`semana`/`hoje`/`amanha`]")
-    elif arg == "semana":
-        await ctx.send(getSemana())
-    elif arg == "hoje":
-        await ctx.send(getToday())
-    elif arg == "amanha":
-        await ctx.send(getTomorrow())
-    else:
-        await ctx.send(f"Argumento inválido. Usa {PREFIX}multirest [`semana`/`hoje`/`amanha`]")
+async def multirest(ctx, *args):
+    instId = instituicoes.get("fcup") #Default
+    instName = "fcup"
 
+    if len(args) == 0:
+        await ctx.send(func.invalidArg())   
 
-def getSemana():
-    r = requests.get(baseURL + 'weekly-menus')
+    possible_args = list(actions.keys()) + list(instituicoes.keys())
 
-    resposta = r.json()
-
-    fcupJson = resposta[0]
-    pratos = fcupJson.get('dishes')
-    return parseSemana(pratos)
-
-def getToday():
-    today = date.today()
-    dayNum = today.weekday()
-    today = today.strftime("%Y-%m-%d")
-    url = baseURL + "daily-menus?date=" + today + "&institution_id=1"
-    r = requests.get(url)
-
-    resposta = r.json()
-    resposta = resposta[0]
-    pratos = resposta.get('dishes')
-    if pratos:
-        return getDayByIndex(dayNum) + "\n\n" + parseDia(pratos)
-    else:
-        return getDayByIndex(dayNum) + "\n\n" + "Não há pratos para hoje"
-
-def getTomorrow():
-    tomorrow = date.today() + timedelta(days=1)
-    dayNum = tomorrow.weekday()
-    tomorrow = tomorrow.strftime("%Y-%m-%d")
-    url = baseURL + "daily-menus?date=" + tomorrow + "&institution_id=1"
-    r = requests.get(url)
-
-    resposta = r.json()
-    resposta = resposta[0]
-    pratos = resposta.get('dishes')
-    if pratos:
-        return getDayByIndex(dayNum) + "\n\n" + parseDia(pratos)
-    else:
-        return getDayByIndex(dayNum) + "\n\n" + "Não há pratos para amanhã"
-    pass
-
-def parseDia(dia):
-    var = ""
-    for i in range(0,4):
-        var += "__" + dia[i]['type_name'] + "__" + " : " + dia[i]['name'] + '\n'
-    return var
-
-def getDayByIndex(day):
-    days = ['**Segunda**', '**Terça**', '**Quarta**', '**Quinta**', '**Sexta**']
-    return days[day]
-
-def parseSemana(semana):
-    var = ""
-    for i in range(1,6):
-        dia = semana.get(str(i))
-        if dia:
-            var += getDayByIndex(i - 1) + "\n\n" + parseDia(dia) + '\n'
+    #get common elements between args and possible_args
+    common_args = [x for x in args if x in possible_args]
+    
+    if len(common_args) == 1:
+        if common_args[0] in actions:
+            await ctx.send(actions[common_args[0]](instId, instName))
         else:
-            var += getDayByIndex(i-1) + " - Feriado" + '\n\n'
-    return var
-
+            await ctx.send(func.invalidArg())
+    elif len(common_args) == 2:
+        if "feup" in common_args:
+            instId = instituicoes.get("feup")
+            instName = "feup"
+        for x in common_args:
+            if x in actions:
+                await ctx.send(actions[x](instId, instName))
+    else:
+        pass
+        
+@bot.command()
+async def mr(ctx, *args):
+    await multirest(ctx, *args)        
+        
 bot.run(DISCORD_API_TOKEN)
