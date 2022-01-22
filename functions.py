@@ -8,18 +8,17 @@ baseURL = "http://admin.multirest.eu/api/"
 def getHelp(*args):
     return "Usa`!multirest [`fcup` / `feup`] [`semana`/`hoje`/`amanha`]`"
 
-#TODO: get prefix from run.py
 def invalidArg(*args):
     return getHelp()
 
-def getSemana(id, arg1):
+def getWeek(id, arg1):
     r = requests.get(baseURL + 'weekly-menus')
 
-    resposta = r.json()
+    res = r.json()
 
-    respostaJson = resposta[id]
-    pratos = respostaJson.get('dishes')
-    return "__**" + arg1.upper() + "**__\n\n" + parseSemana(pratos)
+    resJson = res[id]
+    dishes = resJson.get('dishes')
+    return "__**" + arg1.upper() + "**__\n\n" + parseWeek(dishes)
 
 def getToday(id, arg1):
     if arg1 == "feup":
@@ -31,13 +30,13 @@ def getToday(id, arg1):
     url = f"{baseURL}daily-menus?date={today}&institution_id={id}"
     r = requests.get(url)
 
-    resposta = r.json()
-    resposta = resposta[0]
-    pratos = resposta.get('dishes')
-    if pratos:
-        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + parseDia(pratos)
+    res = r.json()
+    res = res[0]
+    dishes = res.get('dishes')
+    if dishes:
+        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + parseDay(dishes)
     else:
-        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + "Não há pratos para hoje"
+        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + "Não há dishes para hoje"
 
 def getTomorrow(id, arg1):
     if arg1 == "feup":
@@ -49,31 +48,31 @@ def getTomorrow(id, arg1):
     url = f"{baseURL}daily-menus?date={tomorrow}&institution_id={id}"
     r = requests.get(url)
 
-    resposta = r.json()
-    resposta = resposta[0]
-    pratos = resposta.get('dishes')
-    if pratos:
-        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + parseDia(pratos)
+    res = r.json()
+    res = res[0]
+    dishes = res.get('dishes')
+    if dishes:
+        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + parseDay(dishes)
     else:
-        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + "Não há pratos para amanhã"
+        return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + "Não há dishes para amanhã"
     pass
 
-def parseDia(dia):
+def parseDay(day):
     var = ""
     for i in range(0,4):
-        var += "__" + dia[i]['type_name'] + "__" + " : " + dia[i]['name'] + '\n'
+        var += "__" + day[i]['type_name'] + "__" + " : " + day[i]['name'] + '\n'
     return var
 
 def getDayByIndex(day):
     days = ['**Segunda**', '**Terça**', '**Quarta**', '**Quinta**', '**Sexta**', '**Sábado**', '**Domingo**']
     return days[day]
 
-def parseSemana(semana):
+def parseWeek(semana):
     var = ""
     for i in range(1,6):
-        dia = semana.get(str(i))
-        if dia:
-            var += getDayByIndex(i - 1) + "\n\n" + parseDia(dia) + '\n'
+        day = semana.get(str(i))
+        if day:
+            var += getDayByIndex(i - 1) + "\n\n" + parseDay(day) + '\n'
         else:
             var += getDayByIndex(i-1) + " - Feriado" + '\n\n'
     return var
