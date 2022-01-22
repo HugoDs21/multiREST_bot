@@ -1,6 +1,7 @@
 <p align="center">
     <img src="https://img.shields.io/github/stars/HugoDs21/multiREST_bot?style=social">
     <img src="https://img.shields.io/github/forks/HugoDs21/multiREST_bot?style=social">
+    <img src="https://img.shields.io/github/workflow/status/HugoDs21/multiREST_bot/Docker++">
 </p>
  
 # multiREST_bot
