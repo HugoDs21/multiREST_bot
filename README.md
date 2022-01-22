@@ -1,3 +1,8 @@
+<p align="center">
+    <img src="https://img.shields.io/github/stars/HugoDs21/multiREST_bot?style=social">
+    <img src="https://img.shields.io/github/forks/HugoDs21/multiREST_bot?style=social">
+</p>
+ 
 # multiREST_bot
 
 Discord bot that informs about the menus of the Multirest restaurants at FCUP and FEUP.
