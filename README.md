@@ -5,7 +5,7 @@
  
 # multiREST_bot
 
-Discord bot that informs about the menus of the Multirest restaurants at FCUP and FEUP.
+Discord bot that informs about the menus of the [Multirest](http://multirest.eu/) restaurants at FCUP and FEUP.
 
 ***
 
