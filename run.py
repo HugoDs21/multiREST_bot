@@ -9,7 +9,7 @@ DISCORD_API_TOKEN = os.getenv('DISCORD_API_TOKEN')
 
 bot = commands.Bot(command_prefix=PREFIX)
 
-instituicoes = {"fcup": 0, "feup": 2}
+restaurants = {"fcup": 0, "feup": 2}
 
 actions = {"help": func.getHelp, 
            "ajuda": func.getHelp,
@@ -18,8 +18,8 @@ actions = {"help": func.getHelp,
            "hj": func.getToday,
            "amanha": func.getTomorrow,
            "am": func.getTomorrow,
-           "semana": func.getSemana,
-           "sem": func.getSemana,
+           "semana": func.getWeek,
+           "sem": func.getWeek,
            }
 
 @bot.event # on_ready
@@ -31,13 +31,13 @@ async def on_ready():
 
 @bot.command()
 async def multirest(ctx, *args):
-    instId = instituicoes.get("fcup") #Default
+    instId = restaurants.get("fcup") #Default
     instName = "fcup"
 
     if len(args) == 0:
         await ctx.send(func.invalidArg())   
 
-    possible_args = list(actions.keys()) + list(instituicoes.keys())
+    possible_args = list(actions.keys()) + list(restaurants.keys())
 
     #get common elements between args and possible_args
     common_args = [x for x in args if x in possible_args]
@@ -49,7 +49,7 @@ async def multirest(ctx, *args):
             await ctx.send(func.invalidArg())
     elif len(common_args) == 2:
         if "feup" in common_args:
-            instId = instituicoes.get("feup")
+            instId = restaurants.get("feup")
             instName = "feup"
         for x in common_args:
             if x in actions:
