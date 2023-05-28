@@ -9,7 +9,7 @@ DISCORD_API_TOKEN = os.getenv('DISCORD_API_TOKEN')
 
 bot = commands.Bot(command_prefix=PREFIX)
 
-restaurants = {"fcup": 0, "feup": 2}
+restaurants = {"fcup": 1, "feup": 3}
 
 actions = {"help": func.getHelp, 
            "ajuda": func.getHelp,
@@ -41,7 +41,7 @@ async def multirest(ctx, *args):
 
     #get common elements between args and possible_args
     common_args = [x for x in args if x in possible_args]
-    
+
     if len(common_args) == 1:
         if common_args[0] in actions:
             await ctx.send(actions[common_args[0]](instId, instName))

@@ -21,18 +21,18 @@ def getWeek(id, arg1):
     return "__**" + arg1.upper() + "**__\n\n" + parseWeek(dishes)
 
 def getToday(id, arg1):
-    if arg1 == "feup":
-        id += 1
     
     today = date.today()
     dayNum = today.weekday()
     today = today.strftime("%Y-%m-%d")
     url = f"{baseURL}daily-menus?date={today}&institution_id={id}"
     r = requests.get(url)
-
+    
     res = r.json()
+    print(res)
     res = res[0]
     dishes = res.get('dishes')
+    print(dishes)
     if dishes:
         return "__**" + arg1.upper() + "**__\n\n" + getDayByIndex(dayNum) + "\n\n" + parseDay(dishes)
     else:
